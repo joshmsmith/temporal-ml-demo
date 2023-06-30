@@ -2,7 +2,6 @@ from activities import InferenceInput
 from workflow import InferenceWorkflow
 import uuid
 from client import get_client
-import os
 import asyncio
  
 async def main():
@@ -19,7 +18,7 @@ async def main():
         InferenceWorkflow.run,
         input,
         id=f'inference-{id}',
-        task_queue=os.getenv("TEMPORAL_TASK_QUEUE"),
+        task_queue="activity_sticky_queue-distribution-queue",
     )
 
     print(booking_workflow)

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mt-4 mb-4">Temporal Reviews</h1>
+<h2>Upload a CSV File</h2>
+
+<div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+<body>
+  <form id="upload-csv-form" class="mb-4" action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".csv">
+      <input type="submit" value="Upload">
+  </form>
+</body>
+{% endblock %}
+
