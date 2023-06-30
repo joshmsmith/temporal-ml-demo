@@ -1,5 +1,5 @@
 import pandas as pd
-pd.set_option('display.max_colwidth', 0)  # word wrap in cell
+pd.set_option('display.max_colwidth', 0)
 
 import numpy as np
 import openai
@@ -25,10 +25,7 @@ class InferenceOutput:
 async def get_best_label(input: InferenceInput) -> InferenceOutput:
     openai.api_key = os.getenv("CHATGPT_API_KEY")
 
-    #labels = ['happy', 'sad', 'angry', 'neutral']
     label_embeddings = [openai.Embedding.create(input=[i], model='text-embedding-ada-002')['data'][0]['embedding'] for i in input.candidate_labels]
-
-    #text_tester = 'its depressing how bad this is'
     test_embedding = openai.Embedding.create(input=[input.sequence], model='text-embedding-ada-002')['data'][0]['embedding']
 
     sim = [cosine_similarity(test_embedding, i) for i in label_embeddings]
