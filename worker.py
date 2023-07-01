@@ -8,9 +8,9 @@ from temporalio.worker import Worker
 
 interrupt_event = asyncio.Event()
 
-from activities import get_best_label, update_rating
+from activities import get_best_label, get_user_sentiment
 from client import get_worker_client
-from workflow import InferenceWorkflow
+from workflow import ReviewProcessingWorkflow
 
 async def main():
     random.seed(667)
@@ -31,7 +31,7 @@ async def main():
     handle = Worker(
         client,
         task_queue="activity_sticky_queue-distribution-queue",
-        workflows=[InferenceWorkflow],
+        workflows=[ReviewProcessingWorkflow],
         activities=[get_task_queue],
     )
     run_futures.append(handle.run())
@@ -42,8 +42,8 @@ async def main():
         client,
         task_queue=task_queue,
         activities=[
-            get_best_label,
-            update_rating,
+        #    get_best_label,
+            get_user_sentiment,
         ],
     )
 

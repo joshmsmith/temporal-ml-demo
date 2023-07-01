@@ -5,10 +5,26 @@
 <h2>Upload a CSV File</h2>
 
 <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Add new label input field
+        $("#add-label").click(function() {
+            var newLabel = '<input type="text" name="labels[]" required><br>';
+            $("#labels-container").append(newLabel);
+        });
+    });
+</script>
 <body>
   <form id="upload-csv-form" class="mb-4" action="/upload" method="POST" enctype="multipart/form-data">
       <input type="file" name="file" accept=".csv">
+      <br><br>
+      <div id="labels-container">
+          <input type="text" name="labels[]" required>
+          <br>
+      </div>
+      <button type="button" id="add-label">Add</button>
+      <br><br>      
       <input type="submit" value="Upload">
   </form>
 </body>
