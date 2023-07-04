@@ -12,74 +12,69 @@ from dataclasses import dataclass
 from temporalio import activity
 
 @dataclass
-class InferenceInput:
-    sequence: str
-    candidate_labels: list[str]
-
-@dataclass
 class UserSentimentInput:
     filepath: str
-    labels: list[str]
 
 @dataclass
 class UserSentimentOutput:
     sentiment: list[str]
+    probability: list[int]
+    text: list[str]
+    index: list[int]
 
 @dataclass
-class InferenceOutput:
-    prediction: str
-    probability: int
+class Signal:
+    location: str
+    filepath: str
 
 @activity.defn
 async def get_available_task_queue() -> str:
     raise NotImplementedError
-
+  
 @activity.defn
-async def get_best_label(input: InferenceInput) -> InferenceOutput:
-    openai.api_key = os.getenv("CHATGPT_API_KEY")
-
-    label_embeddings = [openai.Embedding.create(input=[i], model='text-embedding-ada-002')['data'][0]['embedding'] for i in input.candidate_labels]
-    test_embedding = openai.Embedding.create(input=[input.sequence], model='text-embedding-ada-002')['data'][0]['embedding']
-
-    sim = [cosine_similarity(test_embedding, i) for i in label_embeddings]
-
-    prediction = input.candidate_labels[np.argmax(sim)]
-    probability = round(100 * sim[input.candidate_labels.index(prediction)])
-
-    output = InferenceOutput(
-        prediction = prediction,
-        probability = probability
-    )   
-    
-    return output
-
-@activity.defn
-async def get_user_sentiment(input: UserSentimentInput) -> UserSentimentOutput:
-    openai.api_key = os.getenv("CHATGPT_API_KEY")
-
+async def get_location(input: UserSentimentInput) -> list[str]:  
     datafile_path = input.filepath
     df = pd.read_csv(datafile_path)
-    df = df[0:10]
-    df
 
-    #labels = ['negative', 'positive']
+    return df['Reviewer_Location'].unique()
+      
+@activity.defn
+async def get_user_sentiment(input: Signal) -> UserSentimentOutput:
+    openai.api_key = os.getenv("CHATGPT_API_KEY")
+    
+    datafile_path = input.filepath
+    df = pd.read_csv(datafile_path)
 
-    label_embeddings = [openai.Embedding.create(input=[i], model='text-embedding-ada-002')['data'][0]['embedding'] for i in input.labels]
+    labels = ['negative', 'positive']
 
-    pred = []
-    for j in range(df.shape[0]):
-        text_tester = df.Text.iloc[j]
-        test_embedding = openai.Embedding.create(input=[text_tester], model='text-embedding-ada-002')['data'][0]['embedding']
-        sim = [cosine_similarity(test_embedding, i) for i in label_embeddings]
-        pred.append(input.labels[np.argmax(sim)])
+    label_embeddings = [openai.Embedding.create(input=[i], model='text-embedding-ada-002')['data'][0]['embedding'] for i in labels]
+
+    pred_list = []
+    probability_list = []
+    text_list = []
+    index_list = []
+
+    for i, row in df.iterrows():
+        if row.Reviewer_Location == input.location:
+            text_tester = row.Review_Text
+            test_embedding = openai.Embedding.create(input=[text_tester], model='text-embedding-ada-002')['data'][0]['embedding']
+            sim = [cosine_similarity(test_embedding, i) for i in label_embeddings]
+
+            pred_list.append(labels[np.argmax(sim)])
+            probability_list.append(round(100 * max(sim)))
+            text_list.append(text_tester)
+            index_list.append(i)
 
     cols = list(df.columns)
-    df = pd.concat([df, pd.Series(pred)], axis=1)
+    df = pd.concat([df, pd.Series(pred_list)], axis=1)
     df.columns = np.concatenate((cols, ['zeroshot']), axis=0)
     df
 
     output = UserSentimentOutput(
-        sentiment=pred
+        sentiment = pred_list,
+        probability = probability_list,
+        text = text_list,
+        index = index_list
     )
     return output        
 

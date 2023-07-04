@@ -1,22 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h2>CSV Contents</h2>
+<h1 class="mt-4 mb-4">Temporal Reviews</h1>
+<h2>Reviews for {{ location }}</h2>
 <style>
     table {
         border-collapse: collapse;
         width: 100%;
     }
-    
+
     th, td {
-        border: 1px solid black;
+        border: 2px solid black;
         padding: 8px;
         text-align: left;
     }
+
+    tr:nth-child(odd) td{
+           background:#e6e3e3;
+    }
+    table tr:nth-child(even) td{
+            background:#fff;
+    }        
     
     th {
-        background-color: #f2f2f2;
+        background-color: #fff;
     }   
 </style>
 <table>

@@ -8,7 +8,7 @@ from temporalio.worker import Worker
 
 interrupt_event = asyncio.Event()
 
-from activities import get_best_label, get_user_sentiment
+from activities import get_user_sentiment, get_location
 from client import get_worker_client
 from workflow import ReviewProcessingWorkflow
 
@@ -42,8 +42,8 @@ async def main():
         client,
         task_queue=task_queue,
         activities=[
-        #    get_best_label,
             get_user_sentiment,
+            get_location,
         ],
     )
 

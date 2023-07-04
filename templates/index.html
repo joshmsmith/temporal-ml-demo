@@ -2,31 +2,33 @@
 
 {% block content %}
 <h1 class="mt-4 mb-4">Temporal Reviews</h1>
-<h2>Upload a CSV File</h2>
+<h2>Upload CSV File</h2>
 
 <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<form id="upload-csv-form" class="mb-4" action="/locations" method="POST" enctype="multipart/form-data">
+    <input type="file" id="file" class="btn btn-dark my-3" name="file" accept=".csv">
+    <br><br>  
+    <input type="submit" class="btn btn-dark my-3" value="Upload">
+    <h6><a href="https://github.com/ktenzer/temporal-ml-demo" style="color: black" target=”_blank”>Github</a></h6>   
+</form>
+
 <script>
-    $(document).ready(function() {
-        // Add new label input field
-        $("#add-label").click(function() {
-            var newLabel = '<input type="text" name="labels[]" required><br>';
-            $("#labels-container").append(newLabel);
-        });
+    document.getElementById("upload-csv-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      
+      var file = document.getElementById("file").value;
+      var errorMessageElement = document.getElementById("error-message");
+      
+      if (!file) {
+        errorMessageElement.style.display = "block";
+        errorMessageElement.textContent = "Please select a csv file.";
+        return;
+      }
+      
+      document.getElementById("upload-csv-form").submit();
     });
-</script>
-<body>
-  <form id="upload-csv-form" class="mb-4" action="/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" accept=".csv">
-      <br><br>
-      <div id="labels-container">
-          <input type="text" name="labels[]" required>
-          <br>
-      </div>
-      <button type="button" id="add-label">Add</button>
-      <br><br>      
-      <input type="submit" value="Upload">
-  </form>
-</body>
+  </script>
+
 {% endblock %}
 

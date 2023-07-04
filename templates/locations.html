@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mt-4 mb-4">Temporal Reviews</h1>
+<h2 class="mt-4 mb-4">Locations</h2>
+
+<div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+<form id="location-search-form" class="mb-4" Action="/upload/{{ id }}/{{ file }}" Method="POST">
+  <div class="form-group">
+    <label for="location">Location:</label>
+    <select id="location" name="location" class="form-control" required>
+      <option value="" selected disabled>Select a Location</option>
+      {% for location in locations %}
+      <option value="{{ location }}">{{ location }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-dark my-3">Show Reviews</button>
+</form>
+
+<script>
+  document.getElementById("location-search-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    var origin = document.getElementById("location").value;
+    var errorMessageElement = document.getElementById("error-message");
+    
+    if (!location) {
+      errorMessageElement.style.display = "block";
+      errorMessageElement.textContent = "Please select a location.";
+      return;
+    }
+    
+    // Proceed with flight search
+    document.getElementById("location-search-form").submit();
+  });
+</script>
+
+{% endblock %}
