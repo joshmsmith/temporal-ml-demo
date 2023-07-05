@@ -27,6 +27,8 @@ $ poetry run python worker.py
 # Connect to app
 [http://localhost:5000](http://localhost:5000)
 
+You will find two csv datasets one of Disneyland reviews and other Amazon product reviews under the datasets directory. Simply upload one to being the demo.
+
 # Walkthrough
 ![Load CSV](/static/csv.png)
 ![Select Location](/static/location.png)
