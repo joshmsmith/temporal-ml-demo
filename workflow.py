@@ -56,10 +56,7 @@ async def workflow_impl(self, input: UserSentimentInput) -> UserSentimentOutput:
         get_location,
         input,
         task_queue=unique_worker_task_queue,
-        start_to_close_timeout=timedelta(seconds=60),
-        retry_policy=RetryPolicy(
-            maximum_attempts=3,
-        ),                  
+        start_to_close_timeout=timedelta(seconds=60),                  
     )
 
     self._locations = locations   

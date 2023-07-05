@@ -6,10 +6,38 @@
 
 <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
 
+<script>
+  function addLabel() {
+      var inputContainer = document.getElementById("label-input-container");
+      var newInput = document.createElement("input");
+      newInput.type = "text";
+      newInput.name = "labels";
+      inputContainer.appendChild(newInput);
+  }
+  
+  function deleteLabel() {
+      var inputContainer = document.getElementById("label-input-container");
+      var inputs = inputContainer.getElementsByTagName("input");
+      if (inputs.length > 2) {  // Ensure there are at least 2 inputs (default positive and negative)
+          inputContainer.removeChild(inputs[inputs.length - 1]);
+      }
+  }
+</script>
+
 <form id="upload-csv-form" class="mb-4" action="/locations" method="POST" enctype="multipart/form-data">
     <input type="file" id="file" class="btn btn-dark my-3" name="file" accept=".csv">
-    <br><br>  
+    <br><br>
+    <h4>Labels</h4>
+    <div id="label-input-container">
+        <input type="text" name="labels" value="positive" readonly>
+        <input type="text" name="labels" value="negative" readonly>
+    </div>
+    <button type="button" class="btn btn-dark my-3" onclick="addLabel()">Add Label</button>
+    <button type="button" class="btn btn-dark my-3" onclick="deleteLabel()">Delete Label</button>
+    <br><br>      
     <input type="submit" class="btn btn-dark my-3" value="Upload">
+    <h6><a href="https://github.com/ktenzer/temporal-ml-demo/blob/main/dataset/AmazonReviews.csv" style="color: black" target=”_blank”>Download Amazon Reviews</a></h6>
+    <h6><a href="https://github.com/ktenzer/temporal-ml-demo/blob/main/dataset/DisneylandReviews.csv" style="color: black" target=”_blank”>Download Disneyland Reviews</a></h6>  
     <h6><a href="https://github.com/ktenzer/temporal-ml-demo" style="color: black" target=”_blank”>Github</a></h6>   
 </form>
 

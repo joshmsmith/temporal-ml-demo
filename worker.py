@@ -1,6 +1,6 @@
 import asyncio
 import random
-from typing import List
+from random import randint
 from uuid import UUID
 
 from temporalio import activity
@@ -13,7 +13,7 @@ from client import get_worker_client
 from workflow import ReviewProcessingWorkflow
 
 async def main():
-    random.seed(667)
+    random.seed(randint(100, 999))
 
     # Create random task queues and build task queue selection function
     task_queue: str = f"activity_sticky_queue-host-{UUID(int=random.getrandbits(128))}"

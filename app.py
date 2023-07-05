@@ -13,7 +13,7 @@ from activities import UserSentimentInput, Signal
 from workflow import ReviewProcessingWorkflow
 app = Flask(__name__)
 
-
+WORKFLOW_NAME = "reviews"
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 @app.route('/', methods=['GET'])
@@ -23,6 +23,8 @@ async def index():
 @app.route('/locations', methods=['POST'])
 async def locations():
     file = request.files['file']
+    labels = request.form.getlist('labels')
+
     if file:
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -40,7 +42,7 @@ async def locations():
         workflow = await client.start_workflow(
             ReviewProcessingWorkflow.run,
             input,
-            id=f'inference-{id}',
+            id=f'{WORKFLOW_NAME}-{id}',
             task_queue="activity_sticky_queue-distribution-queue",
         )
 
@@ -53,21 +55,23 @@ async def locations():
 
         path = pathlib.PurePath(filepath)
         file=path.name
-        return render_template('locations.html', locations=locations, id=id, file=file)                
+        return render_template('locations.html', locations=locations, id=id, file=file, labels=labels)                
     else:
         return "No file selected." 
-@app.route('/upload/<id>/<file>', methods=['POST'])
-async def upload(id, file):
+@app.route('/upload/<id>/<file>/<path:labels>', methods=['POST'])
+async def upload(id, file, labels):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file)
+    labels = labels.split('/')
 
     client = await get_client()
 
     input = Signal(
         filepath = filepath,
-        location = request.form.get('location')
+        location = request.form.get('location'),
+        labels = labels
     ) 
 
-    workflow = client.get_workflow_handle(f'inference-{id}')
+    workflow = client.get_workflow_handle(f'{WORKFLOW_NAME}-{id}')
 
     await workflow.signal(ReviewProcessingWorkflow.pending_user_sentiment, input)
 

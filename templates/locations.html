@@ -2,11 +2,11 @@
 
 {% block content %}
 <h1 class="mt-4 mb-4">Temporal Reviews</h1>
-<h2 class="mt-4 mb-4">Locations</h2>
+<h2 class="mt-4 mb-4">Filter by Reviewer Location</h2>
 
 <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
 
-<form id="location-search-form" class="mb-4" Action="/upload/{{ id }}/{{ file }}" Method="POST">
+<form id="location-search-form" class="mb-4" Action="/upload/{{ id }}/{{ file }}/{{ '/'.join(labels) }}" Method="POST">
   <div class="form-group">
     <label for="location">Location:</label>
     <select id="location" name="location" class="form-control" required>
