@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-reviews
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: temporal-reviews
+  template:
+    metadata:
+      labels:
+        app: temporal-reviews
+    spec:
+      containers:
+      - name: worker
+        image: ktenzer/temporal-reviews-worker:v1.0
+        imagePullPolicy: Always
+        ports:
+        - name: worker
+          containerPort: 9090          
+        env:
+        - name: CHATGPT_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: KEY
+              name: chatgpt-key
+        - name: TEMPORAL_HOST_URL
+          value: temporal-reviews.sdvdw.tmprl.cloud:7233
+        - name: TEMPORAL_NAMESPACE
+          value: temporal-reviews.sdvdw
+        - name: TEMPORAL_TASK_QUEUE
+          value: temporal-reviews
+        - name: TEMPORAL_WORKER_METRICS_PORT
+          value: "9090"                    
+        - name: TEMPORAL_MTLS_TLS_CERT
+          value: /etc/certs/tls.crt
+        - name: TEMPORAL_MTLS_TLS_KEY
+          value: /etc/certs/tls.key  
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: certs
+        - mountPath: /app/uploads
+          name: uploads          
+      - name: ui
+        image: ktenzer/temporal-reviews-workflow:v1.0
+        imagePullPolicy: Always
+        ports:
+        - name: ui
+          containerPort: 5000
+        env:
+        - name: TEMPORAL_HOST_URL
+          value: temporal-reviews.sdvdw.tmprl.cloud:7233
+        - name: TEMPORAL_NAMESPACE
+          value: temporal-reviews.sdvdw
+        - name: TEMPORAL_TASK_QUEUE
+          value: temporal-reviews
+        - name: TEMPORAL_WORKER_METRICS_PORT
+          value: "9090"                    
+        - name: TEMPORAL_MTLS_TLS_CERT
+          value: /etc/certs/tls.crt
+        - name: TEMPORAL_MTLS_TLS_KEY
+          value: /etc/certs/tls.key
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: certs
+        - mountPath: /app/uploads
+          name: uploads               
+      volumes:
+      - name: certs
+        secret:
+          defaultMode: 420
+          secretName: temporal-reviews-tls
+      - name: uploads
+        emptyDir: {}           

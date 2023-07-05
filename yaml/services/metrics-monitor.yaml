@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: temporal-reviews
+  name: metrics-monitor
+spec:
+  endpoints:
+  - port: metrics
+    interval: 15s
+    scrapeTimeout: 14s
+  namespaceSelector:
+    matchNames:
+    - temporal-reviews
+  selector:
+    matchLabels:
+      app: temporal-reviews

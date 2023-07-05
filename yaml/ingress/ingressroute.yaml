@@ -1,0 +1,20 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  labels:
+    app: temporal-reviews-ui
+  name: ingressroute-temporal-reviews
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`reviews.tmprl-demo.cloud`)
+    services:
+    - name: ui
+      passHostHeader: true
+      port: 5000
+      responseForwarding:
+        flushInterval: 100ms
+  tls:
+    secretName: reviews-tmprl-demo-cloud-tls

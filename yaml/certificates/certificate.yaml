@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: reviews-tmprl-demo-cloud
+spec:
+  secretName: reviews-tmprl-demo-cloud-tls
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+  - reviews.tmprl-demo.cloud
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+    group: cert-manager.io
