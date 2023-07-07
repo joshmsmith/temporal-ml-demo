@@ -62,18 +62,36 @@ async def locations():
 async def upload(id, file, labels):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file)
     labels = labels.split('/')
+    location = request.form.get('location')
 
     client = await get_client()
 
-    input = Signal(
+    signalInput = Signal(
         filepath = filepath,
-        location = request.form.get('location'),
+        location = location,
         labels = labels
-    ) 
+    )
+
+    workflowInput = UserSentimentInput(
+        filepath = filepath,
+    )  
 
     workflow = client.get_workflow_handle(f'{WORKFLOW_NAME}-{id}')
 
-    await workflow.signal(ReviewProcessingWorkflow.pending_user_sentiment, input)
+    desc = await workflow.describe()
+    if (desc.status == 1):
+        await workflow.signal(ReviewProcessingWorkflow.pending_user_sentiment, signalInput)
+    else:
+        signal = [signalInput]
+
+        workflow = await client.start_workflow(
+            ReviewProcessingWorkflow.run,
+            workflowInput,
+            id=f'{WORKFLOW_NAME}-{id}',
+            task_queue="activity_sticky_queue-distribution-queue",
+            start_signal="pending_user_sentiment",
+            start_signal_args=signal,            
+        )
 
     result = []
     while not result:
@@ -92,7 +110,7 @@ async def upload(id, file, labels):
         filtered_df.loc[result.index[i]] = [item, result.sentiment[i], result.probability[i]]
         i += 1
 
-    return render_template('table.html', table=filtered_df.to_html(index=True), location=request.form.get('location')) 
+    return render_template('table.html', table=filtered_df.to_html(index=True), location=location) 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)    
