@@ -16,6 +16,8 @@ app = Flask(__name__)
 WORKFLOW_NAME = "reviews"
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
+os.popen('cp dataset/* uploads') 
+
 @app.route('/', methods=['GET'])
 async def index():
     return render_template('index.html')

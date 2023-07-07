@@ -34,11 +34,11 @@ async def get_available_task_queue() -> str:
   
 @activity.defn
 async def get_location(input: UserSentimentInput) -> list[str]:
-    time.sleep(2) 
-
     datafile_path = input.filepath
-    df = pd.read_csv(datafile_path)
+    while not os.path.isfile(datafile_path):
+        time.sleep(1) 
 
+    df = pd.read_csv(datafile_path)
     return df['Reviewer_Location'].unique()
       
 @activity.defn

@@ -1,8 +1,6 @@
 FROM python:3.11
 RUN mkdir /app
-RUN mkdir /app/uploads  
 COPY . /app
-COPY ./dataset/* /app/uploads
 COPY pyproject.toml /app 
 WORKDIR /app
 RUN pip3 install poetry
