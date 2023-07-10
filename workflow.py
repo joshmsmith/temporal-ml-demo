@@ -26,6 +26,10 @@ class ReviewProcessingWorkflow:
         return result      
 
     @workflow.query
+    def taskqueue(self) -> str:
+        return self._taskqueue
+
+    @workflow.query
     def locations(self) -> list[str]:
         return self._locations
 
@@ -44,11 +48,13 @@ class ReviewProcessingWorkflow:
 async def workflow_impl(self, input: UserSentimentInput) -> UserSentimentOutput:
     self._results = UserSentimentOutput
     self._locations = list[str]
+    self._taskqueue = str
 
     unique_worker_task_queue = await workflow.execute_activity(
         activity=get_available_task_queue,
         start_to_close_timeout=timedelta(seconds=10),
     )
+    self._taskqueue = unique_worker_task_queue
 
     workflow.logger.info(f"Matching workflow to worker {unique_worker_task_queue}")
 

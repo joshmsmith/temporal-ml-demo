@@ -55,13 +55,15 @@ async def locations():
             except:
                 pass
 
+        taskqueue = await workflow.query(ReviewProcessingWorkflow.taskqueue)   
+
         path = pathlib.PurePath(filepath)
         file=path.name
-        return render_template('locations.html', locations=locations, id=id, file=file, labels=labels)                
+        return render_template('locations.html', locations=locations, id=id, file=file, labels=labels, taskqueue=taskqueue)                
     else:
         return "No file selected." 
-@app.route('/upload/<id>/<file>/<path:labels>', methods=['POST'])
-async def upload(id, file, labels):
+@app.route('/upload/<taskqueue>/<id>/<file>/<path:labels>', methods=['POST'])
+async def upload(taskqueue, id, file, labels):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file)
     labels = labels.split('/')
     location = request.form.get('location')
@@ -112,7 +114,7 @@ async def upload(id, file, labels):
         filtered_df.loc[result.index[i]] = [item, result.sentiment[i], result.probability[i]]
         i += 1
 
-    return render_template('table.html', table=filtered_df.to_html(index=True), location=location) 
+    return render_template('table.html', table=filtered_df.to_html(index=True), location=location, taskqueue=taskqueue) 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)    
