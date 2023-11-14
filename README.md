@@ -13,8 +13,8 @@ This demo primarily demonstrates an interesting way to show the _durable integra
 | Reliability       |  |
 | Insight           |  |
 
-### Execution
-| Execution          | ✅ |
+### Deployment
+| Deployment          | ✅ |
 |:-------------------|---|
 | Local              | ✅ |
 | Disconnected       | 🚫 |
