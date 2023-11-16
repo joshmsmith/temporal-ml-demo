@@ -37,7 +37,7 @@ You can also demo **visibility** by showing the work being done in the Temporal 
 | Update         |   |
 | Heartbeat      |   |
 | Timer          | ✅ |
-| Activity Retry |   |
+| Activity Retry | ✅ |
 | Cron           |   |   
 | Data Converter |   |
 
