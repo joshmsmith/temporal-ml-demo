@@ -7,11 +7,11 @@ This demo primarily demonstrates an interesting way to show the _durable integra
 You can also demo **visibility** by showing the work being done in the Temporal user interface.
 
 
-| Value Demonstration | ✅ |
+| Primary Value Demonstration | ✅ |
 |:-------------------|---|
 | Velocity          | ✅ |
-| Reliability       | 👍 |
-| Insight           | 👍 |
+| Reliability       |   |
+| Insight           |   |
 
 ### Deployment
 | Deployment          | ✅ |
