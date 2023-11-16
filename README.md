@@ -57,33 +57,15 @@ You can also demo **visibility** by showing the work being done in the Temporal 
 |:-------------------|---|
 | User Interface   | ✅ |
 
-# Setup
-```bash
-$ mkdir .venv
-$ curl -sSL https://install.python-poetry.org | python3 -
-$ poetry install
-```
+# Setup & Run
+See [Demo Setup & Run Instructions](./how-to-run.md).
 
-# Run App
-```bash
-$ poetry run python app.py
-```
 
-# Run Worker
-```bash
-$ export CHATGPT_API_KEY=mykey
-```
-
-```bash
-$ poetry run python worker.py
-```
-
-# Connect to app
-[http://localhost:5000](http://localhost:5000)
-
-You will find two csv datasets one of Disneyland reviews and other Amazon product reviews under the datasets directory. Simply upload one to begin the demo.
 
 # Walkthrough
+### 1. Load CSV
 ![Load CSV](/static/csv.png)
+### 2. Select Location
 ![Select Location](/static/location.png)
+### 3. Review Results
 ![View Sentiment and Probability](/static/table.png)
